@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사주팔자 자동 계산기</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; max-width: 480px; margin: 40px auto; padding: 20px; background: #f5f5f7; }
+        .box { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        h1 { text-align: center; color: #1d1d1f; font-size: 1.4rem; margin-bottom: 20px; }
+        label { display: block; margin-top: 12px; font-size: 0.85rem; color: #86868b; font-weight: 600; }
+        input, button { width: 100%; padding: 12px; margin-top: 6px; border: 1px solid #d2d2d7; border-radius: 8px; box-sizing: border-box; font-size: 0.95rem; }
+        button { background: #0071e3; color: white; border: none; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        button:hover { background: #0077ed; }
+        .result { display: none; margin-top: 25px; border-top: 1px solid #e5e5ea; padding-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; text-align: center; }
+        th, td { border: 1px solid #dcddde; padding: 10px; font-weight: bold; }
+        th { background: #f2f2f7; color: #6e6e73; font-size: 0.85rem; }
+        .wood { color: #34c759; } .fire { color: #ff3b30; } .earth { color: #ff9500; } .metal { color: #8e8e93; } .water { color: #007aff; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h1>🔮 사주팔자 자동 계산기</h1>
+    <label>이름</label>
+    <input type="text" id="name" value="홍길동">
+    
+    <label>생년월일 (양력)</label>
+    <input type="date" id="bdate" value="1990-01-01">
+    
+    <label>출생시간</label>
+    <input type="time" id="btime" value="12:00">
+    
+    <button onclick="run()">사주팔자 분석하기</button>
+
+    <div id="res" class="result">
+        <h3 id="resName" style="text-align:center; margin-bottom: 15px;"></h3>
+        <table>
+            <tr><th>시주(時)</th><th>일주(日)</th><th>월주(月)</th><th>년주(年)</th></tr>
+            <tr id="gan"></tr>
+            <tr id="zi"></tr>
+        </table>
+    </div>
+</div>
+
+<script>
+const G = [{n:"갑(甲)",c:"wood"},{n:"을(乙)",c:"wood"},{n:"병(丙)",c:"fire"},{n:"정(丁)",c:"fire"},{n:"무(戊)",c:"earth"},{n:"기(己)",c:"earth"},{n:"경(庚)",c:"metal"},{n:"신(辛)",c:"metal"},{n:"임(壬)",c:"water"},{n:"계(癸)",c:"water"}];
+const Z = [{n:"자(子)",c:"water"},{n:"축(丑)",c:"earth"},{n:"인(寅)",c:"wood"},{n:"묘(卯)",c:"wood"},{n:"진(辰)",c:"earth"},{n:"사(巳)",c:"fire"},{n:"오(午)",c:"fire"},{n:"미(未)",c:"earth"},{n:"신(申)",c:"metal"},{n:"유(酉)",c:"metal"},{n:"술(戌)",c:"earth"},{n:"해(亥)",c:"water"}];
+
+function run() {
+    let name = document.getElementById('name').value;
+    let d = new Date(document.getElementById('bdate').value);
+    let h = parseInt(document.getElementById('btime').value.split(':')[0]);
+    
+    let y = d.getFullYear(), m = d.getMonth() + 1;
+    let yG = G[(y-4)%10 < 0 ? (y-4)%10+10 : (y-4)%10], yZ = Z[(y-4)%12 < 0 ? (y-4)%12+12 : (y-4)%12];
+    let mG = G[(y*12+m+1)%10], mZ = Z[(m+1)%12];
+    let diff = Math.floor((d - new Date(1900,0,1))/(1000*60*60*24));
+    let dG = G[(diff+100000)%10], dZ = Z[(diff+100000+10)%12];
+    let hZ = Z[Math.floor((h+1)/2)%12], hG = G[((diff+100000)%10*2 + Math.floor((h+1)/2)%12)%10];
+
+    document.getElementById('resName').innerText = "✨ " + name + "님의 사주명식";
+    document.getElementById('gan').innerHTML = `<td class="${hG.c}">${hG.n}</td><td class="${dG.c}">${dG.n}</td><td class="${mG.c}">${mG.n}</td><td class="${yG.c}">${yG.n}</td>`;
+    document.getElementById('zi').innerHTML = `<td class="${hZ.c}">${hZ.n}</td><td class="${dZ.c}">${dZ.n}</td><td class="${mZ.c}">${mZ.n}</td><td class="${yZ.c}">${yZ.n}</td>`;
+    document.getElementById('res').style.display = 'block';
+}
+</script>
+</body>
+</html>
